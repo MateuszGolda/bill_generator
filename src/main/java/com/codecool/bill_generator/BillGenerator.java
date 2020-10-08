@@ -3,7 +3,6 @@ package com.codecool.bill_generator;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class BillGenerator {
     private static Map<String, List<AmountAndPrice>> products;
@@ -21,20 +20,21 @@ class BillGenerator {
     }
 
     private static int computeBillTotal() {
-        AtomicInteger total = new AtomicInteger();
-        basket.forEach((k, v) -> {
+        return basket.entrySet().stream().mapToInt((entry) -> {
+            String barcode = entry.getKey();
+            int productAmount = entry.getValue();
+            int total = 0;
             int i = 0;
-            int productsInBasket = v;
             AmountAndPrice promotion;
 
-            while (i < products.get(k).size()) {
-                promotion = products.get(k).get(i);
-                if (productsInBasket >= promotion.getAmount()) {
-                    total.addAndGet(productsInBasket / promotion.getAmount() * promotion.getPrice());
-                    productsInBasket %= promotion.getAmount();
-                } else i++;
+            while (i < products.get(barcode).size()) {
+                promotion = products.get(barcode).get(i++);
+                if (productAmount >= promotion.getAmount()) {
+                    total += productAmount / promotion.getAmount() * promotion.getPrice();
+                    productAmount %= promotion.getAmount();
+                }
             }
-        });
-        return total.get();
+            return total;
+        }).sum();
     }
 }
