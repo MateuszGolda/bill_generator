@@ -17,7 +17,7 @@ class ProductParserTest {
     }
 
     @Test
-    void test() throws IOException {
+    void should_populateMap_forSampleCsvFile() throws IOException {
         Map<String, List<AmountAndPrice>> expected = new HashMap<>();
 
         expected.put("3401", Collections.singletonList(
@@ -31,7 +31,7 @@ class ProductParserTest {
                 new AmountAndPrice(2, 200),
                 new AmountAndPrice(1, 120)));
 
-        Map<String, List<AmountAndPrice>> actual = productParser.parseProducts("src/test/java/com/codecool/bill_generator/product_prices.csv");
+        Map<String, List<AmountAndPrice>> actual = productParser.parseProducts("src/test/resources/product_prices.csv");
 
         assertEquals(expected, actual);
     }
