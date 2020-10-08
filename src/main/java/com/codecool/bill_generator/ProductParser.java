@@ -26,11 +26,15 @@ public class ProductParser {
      * @param products map representing products details
      */
     private void addToMap(String line, Map<String, List<AmountAndPrice>> products) {
-        String[] arr = line.split(",");
-        products.merge(arr[0], Collections.singletonList(
-                new AmountAndPrice(Integer.parseInt(arr[2]), Integer.parseInt(arr[3].replace(".", "")))),
-                (a, b) -> a.get(0).compareTo(b.get(0)) > 0
-                        ? Arrays.asList(a.get(0), b.get(0))
-                        : Arrays.asList(b.get(0), a.get(0)));
+        String[] promotion = line.split(",");
+        products.merge(promotion[0], Collections.singletonList(
+                new AmountAndPrice(Integer.parseInt(promotion[2]), Integer.parseInt(promotion[3].replace(".", "")))),
+                (promoList1, promoList2) -> {
+                    var list = new ArrayList<>(promoList1);
+                    list.addAll(promoList2);
+                    Collections.sort(list);
+                    Collections.reverse(list);
+                    return list;
+                });
     }
 }
