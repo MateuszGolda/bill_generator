@@ -29,7 +29,7 @@ public class AmountAndPrice implements Comparable<AmountAndPrice> {
 
     @Override
     public int compareTo(AmountAndPrice other) {
-        return Integer.compare(amount, other.amount);
+        return Integer.compare(other.amount, amount);
     }
 
     @Override

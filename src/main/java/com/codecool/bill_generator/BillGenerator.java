@@ -1,14 +1,18 @@
 package com.codecool.bill_generator;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 class BillGenerator {
-    private static Map<String, List<AmountAndPrice>> products;
+    private static Map<String, Collection<AmountAndPrice>> products;
     private static Map<String, Integer> basket;
 
     public static void main(String[] args) {
+        if (args.length < 2) {
+            System.out.println("2 arguments expected");
+            return;
+        }
         try {
             products = new ProductParser().parseProducts(args[0]);
             basket = new BasketParser().parseBasket(args[1]);
@@ -20,21 +24,22 @@ class BillGenerator {
     }
 
     private static int computeBillTotal() {
-        return basket.entrySet().stream().mapToInt((entry) -> {
-            String barcode = entry.getKey();
-            int productAmount = entry.getValue();
-            int total = 0;
-            int i = 0;
-            AmountAndPrice promotion;
+        return basket.entrySet()
+                .stream()
+                .mapToInt((barcodeAndAmount) -> {
+                    String barcode = barcodeAndAmount.getKey();
+                    final int[] productAmountInBasket = new int[]{barcodeAndAmount.getValue()};
 
-            while (i < products.get(barcode).size()) {
-                promotion = products.get(barcode).get(i++);
-                if (productAmount >= promotion.getAmount()) {
-                    total += productAmount / promotion.getAmount() * promotion.getPrice();
-                    productAmount %= promotion.getAmount();
-                }
-            }
-            return total;
-        }).sum();
+                    return products.get(barcode)
+                            .stream()
+                            .mapToInt(promotion -> {
+                                if (promotion.getAmount() > productAmountInBasket[0]) {
+                                    return 0;
+                                }
+                                int total = productAmountInBasket[0] / promotion.getAmount() * promotion.getPrice();
+                                productAmountInBasket[0] %= promotion.getAmount();
+                                return total;
+                            }).sum();
+                }).sum();
     }
 }

@@ -18,20 +18,20 @@ class ProductParserTest {
 
     @Test
     void should_populateMap_forSampleCsvFile() throws IOException {
-        Map<String, List<AmountAndPrice>> expected = new HashMap<>();
+        Map<String, Collection<AmountAndPrice>> expected = new HashMap<>();
 
-        expected.put("3401", Collections.singletonList(
-                new AmountAndPrice(1, 315)));
+        expected.put("3401", new TreeSet<>(Collections.singletonList(
+                new AmountAndPrice(1, 315))));
 
-        expected.put("1243", Arrays.asList(
+        expected.put("1243", new TreeSet<>(Arrays.asList(
                 new AmountAndPrice(10, 190),
-                new AmountAndPrice(1, 20)));
+                new AmountAndPrice(1, 20))));
 
-        expected.put("1001", Arrays.asList(
+        expected.put("1001", new TreeSet<>(Arrays.asList(
                 new AmountAndPrice(2, 200),
-                new AmountAndPrice(1, 120)));
+                new AmountAndPrice(1, 120))));
 
-        Map<String, List<AmountAndPrice>> actual = productParser.parseProducts("src/test/resources/product_prices.csv");
+        Map<String, Collection<AmountAndPrice>> actual = productParser.parseProducts("src/test/resources/product_prices.csv");
 
         assertEquals(expected, actual);
     }
